@@ -9,6 +9,12 @@ const path = require('path')
 const mongoose = require('mongoose')
 const session = require('express-session')
 const flash = require('connect-flash')
+require("./models/Postagem")
+const Postagem = mongoose.model('postagens')
+require("./models/Usuario")
+const usuarios = require("./routes/usuario")
+const auth = require('passport')
+require('./config/auth')(auth)
 
 //configuraçoes 
 //sessao
@@ -17,6 +23,8 @@ app.use(session({
     resave: "true",
     saveUninitialized: true
 }))
+app.use(auth.initialize())
+app.use(auth.session())
 //flash
 app.use(flash())
 
@@ -42,9 +50,24 @@ mongoose.connect('mongodb://localhost:27017/blogapp', { useNewUrlParser: true, u
 })
 //
 app.use(express.static(path.join(__dirname, "public")))
+
 //rotas
 
+app.get('/', (req, res) => {
+    Postagem.find().lean().populate("categorias").sort({data: "desc"}).then((postagens) => {
+        res.render("index", {postagens: postagens})
+    }).catch((erro) => {
+        req.flash("error_msg", "Houve um erro")
+        res.redirect("/404")
+    })
+})
+
+app.get("/404", (req, res) => {
+    res.send("Erro 404")
+})
+
 app.use('/admin', admin)
+app.use("/usuarios", usuarios)
 
 
 
@@ -55,7 +78,7 @@ app.use('/admin', admin)
 
 
 // Outros
-const PORT = 8081
+const PORT = 8082
 app.listen(PORT, () => {
     console.log("Servido rodando!!!")
 })

@@ -5,16 +5,24 @@
 
 {{#each categorias}}
 
-<div class="card">
+<div class="card mt-2">
     <div class="card-body">
         <h4>{{this.nome}}</h4>
         <small>{{this.slug}}</small>
         <div class="container mt-2"></div>
         <small>Data de criação: {{this.date}}</small>
-        <a href="/admin/categorias/edit/{{_id}}"><button class="btn btn-success mt-2">Editar</button> </a>
+        <div>
+            <a href="/admin/categorias/edit/{{_id}}"><button class="btn btn-success mt-2"> Editar </button> </a>
+        </div>
+        <form action="/admin/categorias/deletar" method="POST">
+            <input type="hidden" name="id" value="{{_id}}">
+            <button type="submit" class="btn btn-danger mt-2">Deletar</button>
+            <br>
+        </form>
+
     </div>
 </div>
 
 {{else}}
-
+<h4>Nenhuma categoria registrada!!!</h4>
 {{/each}}

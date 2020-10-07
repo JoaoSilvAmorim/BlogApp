@@ -1,8 +1,13 @@
 const express = require('express')
-const router = express()
+const router = express() 
 const mongoose = require('mongoose')
+
 require("../models/Categoria")
 const Categoria = mongoose.model("categorias")
+
+require("../models/Postagem")
+const Postagem = mongoose.model("postagens")
+
 
 router.get('/', (req, res) => {
     res.render("../views/layouts/admin/index.handlebars")
@@ -56,6 +61,18 @@ router.post('/categorias/edit', (req, res) => {
     })
 })
 
+router.post('/categorias/deletar', (req, res) => {
+ 
+    Categoria.deleteOne({ _id: req.body.id }).then(() => {
+        req.flash('success_msg', "Deletado")
+        res.redirect('/admin/categorias')
+    }).catch((error) => {
+        req.flash('err_sucsess', 'Erro ao deletar')
+        res.redirect('/admin/categorias')
+    })
+
+})
+
 router.post('/categorias/nova', (req, res) => {
     var erros = []
     if (!req.body.nome || typeof req.body.nome == undefined || req.body.nome == null) {
@@ -80,7 +97,6 @@ router.post('/categorias/nova', (req, res) => {
         new Categoria(novaCategoria).save().then(() => {
             req.flash("success_msg", "Categoria criada!!!")
             res.redirect('/admin/categorias')
-            console.log(erros)
         }).catch((erro) => {
             req.flash("error_msg", "Erro ao criar categoria!!!")
             res.redirect("/admin")
@@ -89,5 +105,71 @@ router.post('/categorias/nova', (req, res) => {
 
 
 })
+
+
+router.get("/postagens", (req, res) => {
+
+    Postagem.find().lean().populate("categoria").then((postagens) => {
+        res.render("../views/layouts/admin/postagens.handlebars", {postagens: postagens})
+    }).catch((error) => {
+        
+    })
+   
+})
+
+router.post("/postagens/deletar", (req, res) => {
+    
+    Postagem.deleteOne({_id: req.body.id}).then(() => {
+        req.flash("success_msg", "Postagem deletada com sucesso")
+        res.redirect("/admin/postagens")
+    }).catch((erro) => {
+        req.flash("error_msg", "Erro ao deletar postagem")
+        res.redirect("/admin/postagens")
+    })
+
+})
+
+
+
+router.get("/postagens/add", (req, res) => {
+    Categoria.find().lean().then((categorias) => {
+        res.render("../views/layouts/admin/addpostagem.handlebars", { categorias: categorias })
+    }).catch((erro) => {
+        req.flash("error_msg", "Erro ao carregar formualrio!!!")
+        res.redirect("/admin")
+    })
+
+}) 
+
+
+router.post("/postagens/nova", (req, res) => {
+    var erros = []
+    if (req.body.categoria == "0") {
+        erros.push({ texto: "Categoria invalida, registre uma categoria" })
+    }
+    if (erros.length > 0) {
+        res.render("../views/layouts/admin/addpostagem.handlebars", { erros: erros })
+    } else {
+        const novaPostagem = {
+            titulo: req.body.titulo,
+            descricao: req.body.descricao,
+            conteudo: req.body.conteudo,
+            categoria: req.body.categoria,
+            slug: req.body.slug
+        }
+
+        new Postagem(novaPostagem).save().then(() => {
+            req.flash("success_msg", "Postagem cadastrada com sucesso!!!")
+            res.redirect("/admin/postagens")
+        }).catch((erro) => {
+            req.flash("error_msg", "Erro ao criar postagens!!!")
+            res.redirect("/admin/postagens")
+        })
+    }
+})
+
+
+
+
 
 module.exports = router
