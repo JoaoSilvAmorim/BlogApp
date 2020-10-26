@@ -155,7 +155,8 @@ router.post("/postagens/nova", (req, res) => {
             descricao: req.body.descricao,
             conteudo: req.body.conteudo,
             categoria: req.body.categoria,
-            slug: req.body.slug
+            slug: req.body.slug,
+            usuario: req.body.iduser
         }
 
         new Postagem(novaPostagem).save().then(() => {

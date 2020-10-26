@@ -2,9 +2,7 @@
 const express = require('express')
 const handlebars = require('express-handlebars')
 const bodyParser = require('body-parser')
-const router = require('./routes/admin')
 const app = express()
-const admin = require('./routes/admin')
 const path = require('path')
 const mongoose = require('mongoose')
 const session = require('express-session')
@@ -13,8 +11,10 @@ require("./models/Postagem")
 const Postagem = mongoose.model('postagens')
 require("./models/Usuario")
 const usuarios = require("./routes/usuario")
-const auth = require('passport')
-require('./config/auth')(auth)
+const passport = require('passport')
+require('./config/auth')(passport)
+const router = require('./routes/admin')
+const admin = require('./routes/admin')
 
 //configuraçoes 
 //sessao
@@ -23,8 +23,11 @@ app.use(session({
     resave: "true",
     saveUninitialized: true
 }))
-app.use(auth.initialize())
-app.use(auth.session())
+
+//auth
+app.use(passport.initialize())
+app.use(passport.session())
+
 //flash
 app.use(flash())
 
@@ -70,15 +73,8 @@ app.use('/admin', admin)
 app.use("/usuarios", usuarios)
 
 
-
-
-
-
-
-
-
 // Outros
-const PORT = 8082
+const PORT = 8081
 app.listen(PORT, () => {
     console.log("Servido rodando!!!")
 })

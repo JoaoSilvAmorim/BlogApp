@@ -34,6 +34,12 @@ const Postagem = new Schema({
         required: true
     },
 
+    usuario: {
+        type: Schema.Types.ObjectId,
+        ref: "usuarios",
+        required: true
+    }
+
 })
 
 mongoose.model("postagens", Postagem)
