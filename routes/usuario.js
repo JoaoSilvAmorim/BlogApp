@@ -121,7 +121,7 @@ router.post("/login", (req, res) => {
 
                    if (correct) {
 
-                      //usuario que sera renderizado
+                      //usuario que sera renderizado na home
                      const user = {
                           nome: usuario.nome,
                           id: usuario._id
