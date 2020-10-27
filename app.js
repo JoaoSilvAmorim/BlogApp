@@ -11,8 +11,6 @@ require("./models/Postagem")
 const Postagem = mongoose.model('postagens')
 require("./models/Usuario")
 const usuarios = require("./routes/usuario")
-const passport = require('passport')
-require('./config/auth')(passport)
 const router = require('./routes/admin')
 const admin = require('./routes/admin')
 
@@ -24,9 +22,6 @@ app.use(session({
     saveUninitialized: true
 }))
 
-//auth
-app.use(passport.initialize())
-app.use(passport.session())
 
 //flash
 app.use(flash())
