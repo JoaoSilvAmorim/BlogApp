@@ -7,7 +7,6 @@ const Categoria = mongoose.model("categorias")
 require("../models/Postagem")
 const Postagem = mongoose.model('postagens')
 const bcrypt = require('bcryptjs')
-const passport = require('passport')
 const router = express.Router()
 
 router.get("/registro", (req, res) => {
