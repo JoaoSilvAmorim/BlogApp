@@ -85,7 +85,7 @@ router.post("/registro", (req, res) => {
 
 })
 
-router.post('/usuarios/delete', (req, res) => {
+router.post('/delete', (req, res) => { 
     Usuario.deleteOne({_id: req.body.id}).then(() =>{
         req.flash('success_msg', 'Deletado')
         res.redirect('/login')
